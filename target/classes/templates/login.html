@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Kenpaku</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .input-field:focus { box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3); }
+        .glass-effect { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 min-h-screen flex items-center justify-center p-4">
+<div class="w-full max-w-md">
+    <!-- Logo & Branding -->
+    <div class="text-center mb-12">
+        <div class="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl mb-6 shadow-lg">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+        </div>
+        <h1 class="text-4xl font-bold text-gray-900 mb-2 tracking-tight">Kenpaku</h1>
+        <p class="text-gray-500 text-sm font-medium">Gestión de Distribuidora Ferretera</p>
+    </div>
+
+    <!-- Login Card -->
+    <div class="glass-effect rounded-2xl shadow-2xl overflow-hidden border border-white/40">
+        <div class="px-8 py-10">
+            <h2 class="text-2xl font-bold text-gray-900 mb-8">Bienvenido</h2>
+
+            <!-- Error Messages -->
+            <div th:if="${error}" class="mb-6">
+                <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div>
+                            <p class="text-red-800 font-semibold text-sm">Credenciales inválidas</p>
+                            <p th:if="${remainingAttempts > 0}" class="text-red-700 text-xs mt-1">
+                                Intentos restantes: <span th:text="${remainingAttempts}" class="font-bold"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Locked Message -->
+            <div th:if="${locked}" class="mb-6">
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <div>
+                            <p class="text-amber-800 font-semibold text-sm">Acceso bloqueado temporalmente</p>
+                            <p class="text-amber-700 text-xs mt-1">Demasiados intentos fallidos. Recarga para volver a intentar.</p>
+                            <a th:href="${resetUrl}" class="inline-block mt-3 px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-medium text-xs transition">
+                                Recargar página
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logout Message -->
+            <div th:if="${logout}" class="mb-6">
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                    <div class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                        </svg>
+                        <p class="text-emerald-800 font-medium text-sm">Sesión cerrada correctamente</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <form th:action="@{/login}" method="post" class="space-y-5">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div>
+                    <label for="username" class="block text-sm font-semibold text-gray-700 mb-2">Usuario</label>
+                    <input id="username" name="username" type="text" autofocus
+                           th:disabled="${locked}"
+                           class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition"
+                           placeholder="Usuario" />
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Contraseña</label>
+                    <input id="password" name="password" type="password"
+                           th:disabled="${locked}"
+                           class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed transition"
+                           placeholder="••••••••" />
+                </div>
+
+                <button type="submit"
+                        th:disabled="${locked}"
+                        class="btn-primary w-full py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-gray-400 disabled:to-gray-400 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition duration-200">
+                    Iniciar sesión
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-8">
+        <p class="text-gray-500 text-xs">
+            Kenpaku Ferretería <span class="text-gray-400">©</span> 2026
+        </p>
+    </div>
+</div>
+</body>
+</html>

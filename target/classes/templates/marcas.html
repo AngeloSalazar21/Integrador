@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marcas - Kenpaku Ferretería</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 min-h-screen">
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl">
+        <div class="p-6 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-bold text-base tracking-tight">Kenpaku</p>
+                    <p class="text-xs text-slate-400 font-medium">Distribuidora</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="p-4 space-y-2">
+            <a th:href="@{/}" class="block px-4 py-3 rounded-lg text-slate-300 font-medium text-sm hover:bg-slate-700 transition flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 11l4-4m0 0l4 4m-4-4V8"></path>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a th:href="@{/productos}" class="block px-4 py-3 rounded-lg text-slate-300 font-medium text-sm hover:bg-slate-700 transition flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m0 0v10l8 4"></path>
+                </svg>
+                <span>Productos</span>
+            </a>
+            <a th:href="@{/categorias}" class="block px-4 py-3 rounded-lg text-slate-300 font-medium text-sm hover:bg-slate-700 transition flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                </svg>
+                <span>Categorías</span>
+            </a>
+            <a th:href="@{/marcas}" class="block px-4 py-3 rounded-lg bg-blue-600 font-medium text-sm hover:bg-blue-700 transition flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7.5-4a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>Marcas</span>
+            </a>
+        </nav>
+
+        <div class="absolute bottom-0 left-0 right-0 w-64 p-4 border-t border-white/10 bg-gradient-to-t from-slate-900">
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="w-full px-4 py-2.5 bg-red-600/20 hover:bg-red-600/30 text-red-300 hover:text-red-200 rounded-lg font-medium text-sm transition duration-200 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <!-- Header -->
+        <header class="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 shadow-sm">
+            <div class="px-8 py-6 flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Marcas</h1>
+                    <p class="text-gray-500 text-sm mt-2 font-medium">Administra proveedores y fabricantes</p>
+                </div>
+                <button onclick="openModal()" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition">
+                    + Nueva marca
+                </button>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="flex-1 p-8">
+            <!-- Success Message -->
+            <div th:if="${mensaje}" class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <p class="text-green-800 font-medium text-sm" th:text="${mensaje}"></p>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-6 py-4 text-left font-semibold text-gray-900 text-xs uppercase tracking-wider">Nombre</th>
+                            <th class="px-6 py-4 text-left font-semibold text-gray-900 text-xs uppercase tracking-wider">Estado</th>
+                            <th class="px-6 py-4 text-right font-semibold text-gray-900 text-xs uppercase tracking-wider">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        <tr th:each="marca : ${marcas}" class="hover:bg-gray-50 transition">
+                            <td class="px-6 py-4 font-medium text-gray-900" th:text="${marca.nombre}"></td>
+                            <td class="px-6 py-4">
+                                <span th:if="${marca.activo}" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-semibold">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                                    Activo
+                                </span>
+                                <span th:unless="${marca.activo}" class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-semibold">
+                                    <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+                                    Inactivo
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <button onclick="editModal()" th:onclick="'editModal(' + ${marca.id} + ')'" class="text-blue-600 hover:text-blue-800 font-semibold text-sm">Editar</button>
+                                <button type="button" onclick="confirmDelete(this)" th:onclick="'confirmDelete(this, ' + ${marca.id} + ')'" class="text-gray-400 hover:text-red-600 font-semibold text-sm ml-4">Desactivar</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Empty State -->
+                <div th:if="${#lists.isEmpty(marcas)}" class="text-center py-16">
+                    <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m7.5-4a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p class="text-gray-500 font-medium">Sin marcas</p>
+                    <p class="text-gray-400 text-sm mt-1">Crea tu primera marca</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white/50 border-t border-gray-200/50 px-8 py-4 text-center">
+            <p class="text-gray-500 text-sm font-medium">Kenpaku Ferretería <span class="text-gray-300">•</span> 2026</p>
+        </footer>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-2xl max-w-md w-full">
+        <div class="sticky top-0 bg-white border-b border-gray-200 px-8 py-6 flex items-center justify-between">
+            <h2 class="text-2xl font-bold text-gray-900" id="modalTitle">Nueva Marca</h2>
+            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+
+        <form id="modalForm" th:action="@{/marcas/guardar}" method="post" class="p-8">
+            <input type="hidden" id="modalId" name="id" />
+
+            <div class="mb-8">
+                <label for="modalNombre" class="block text-sm font-semibold text-gray-700 mb-3">Nombre de la marca *</label>
+                <input id="modalNombre" type="text" name="nombre"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                       placeholder="Ej: Kenpaku" required />
+            </div>
+
+            <div class="mb-8">
+                <label class="flex items-center gap-3 cursor-pointer p-3 hover:bg-gray-50 rounded-lg border border-gray-200">
+                    <input id="modalActivo" type="checkbox" name="activo" checked />
+                    <span class="text-sm font-medium text-gray-700">Marca activa en el sistema</span>
+                </label>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t border-gray-200">
+                <button type="submit" id="modalSubmitBtn" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition">
+                    Guardar
+                </button>
+                <button type="button" onclick="closeModal()" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg font-medium text-sm transition">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="toast" class="hidden fixed bottom-6 right-6 bg-emerald-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 z-40 animate-fade-in">
+    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+    </svg>
+    <span id="toastMsg"></span>
+</div>
+
+<div id="confirmModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-lg shadow-2xl max-w-sm w-full">
+        <div class="px-8 py-6">
+            <div class="flex items-start gap-4">
+                <div class="flex-shrink-0">
+                    <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4v2m0-6a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold text-gray-900">¿Desactivar marca?</h3>
+                    <p class="mt-2 text-sm text-gray-600">Esta acción no se puede deshacer.</p>
+                </div>
+            </div>
+            <div class="flex gap-3 mt-6 pt-6 border-t border-gray-200">
+                <button onclick="cancelDelete()" class="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg font-medium text-sm transition">
+                    Cancelar
+                </button>
+                <button id="confirmDeleteBtn" class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium text-sm transition">
+                    Desactivar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes fadeIn { from { opacity: 0; transform: translateY(1rem); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in { animation: fadeIn 0.3s ease-out; }
+</style>
+
+<script>
+let deleteId = null, deleteUrl = '';
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 3000);
+}
+
+function openModal() {
+    document.getElementById('modal').classList.remove('hidden');
+    document.getElementById('modalId').value = '';
+    document.getElementById('modalForm').reset();
+    document.getElementById('modalTitle').textContent = 'Nueva Marca';
+    document.getElementById('modalSubmitBtn').textContent = 'Guardar';
+}
+
+function editModal(id) {
+    fetch(`/api/marcas/${id}`)
+        .then(r => r.json())
+        .then(data => {
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('modalId').value = data.id;
+            document.getElementById('modalNombre').value = data.nombre;
+            document.getElementById('modalActivo').checked = data.activo;
+            document.getElementById('modalTitle').textContent = 'Editar Marca';
+            document.getElementById('modalSubmitBtn').textContent = 'Actualizar';
+        });
+}
+
+function closeModal() {
+    document.getElementById('modal').classList.add('hidden');
+}
+
+function confirmDelete(btn, id) {
+    deleteId = id;
+    deleteUrl = `/marcas/${id}/eliminar`;
+    document.getElementById('confirmModal').classList.remove('hidden');
+}
+
+function cancelDelete() {
+    deleteId = null;
+    document.getElementById('confirmModal').classList.add('hidden');
+}
+
+document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+    if (deleteId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = deleteUrl;
+        const csrf = document.querySelector('input[name="_csrf"]');
+        if (csrf) {
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = csrf.name;
+            csrfInput.value = csrf.value;
+            form.appendChild(csrfInput);
+        }
+        document.body.appendChild(form);
+        form.submit();
+    }
+});
+
+document.getElementById('modal').addEventListener('click', (e) => {
+    if (e.target.id === 'modal') closeModal();
+});
+
+document.getElementById('confirmModal').addEventListener('click', (e) => {
+    if (e.target.id === 'confirmModal') cancelDelete();
+});
+
+document.getElementById('modalForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.getElementById('modalForm').submit();
+});
+</script>
+</body>
+</html>

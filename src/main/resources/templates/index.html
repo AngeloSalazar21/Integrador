@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Kenpaku</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .stat-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .stat-card:hover { transform: translateY(-4px); box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1); }
+        .feature-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .feature-card:hover { transform: translateY(-6px); }
+        .icon-box { transition: all 0.3s ease; }
+        .feature-card:hover .icon-box { transform: scale(1.05); }
+        .nav-link { transition: all 0.2s ease; }
+        .nav-link.active { background: linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(37, 99, 235) 100%); }
+        .nav-link:not(.active):hover { background-color: rgba(255, 255, 255, 0.08); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 min-h-screen">
+<div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl">
+        <!-- Logo -->
+        <div class="p-6 border-b border-white/10">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="font-bold text-base tracking-tight">Kenpaku</p>
+                    <p class="text-xs text-slate-400 font-medium">Distribuidora</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="p-4 space-y-2">
+            <a th:href="@{/}" class="nav-link active block px-4 py-3 rounded-lg font-medium text-sm flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 11l4-4m0 0l4 4m-4-4V8"></path>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a th:href="@{/productos}" class="nav-link block px-4 py-3 rounded-lg font-medium text-sm text-slate-300 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m0 0v10l8 4"></path>
+                </svg>
+                <span>Productos</span>
+            </a>
+            <a th:href="@{/categorias}" class="nav-link block px-4 py-3 rounded-lg font-medium text-sm text-slate-300 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                </svg>
+                <span>Categorías</span>
+            </a>
+            <a th:href="@{/marcas}" class="nav-link block px-4 py-3 rounded-lg font-medium text-sm text-slate-300 flex items-center gap-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7.5-4a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>Marcas</span>
+            </a>
+        </nav>
+
+        <!-- Logout -->
+        <div class="absolute bottom-0 left-0 right-0 w-64 p-4 border-t border-white/10 bg-gradient-to-t from-slate-900">
+            <form th:action="@{/logout}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="w-full px-4 py-2.5 bg-red-600/20 hover:bg-red-600/30 text-red-300 hover:text-red-200 rounded-lg font-medium text-sm transition duration-200 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+        <!-- Header -->
+        <header class="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 shadow-sm">
+            <div class="px-8 py-6">
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Panel de Control</h1>
+                <p class="text-gray-500 text-sm mt-2 font-medium">Monitorea el estado de tu inventario y gestión</p>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="flex-1 p-8">
+            <!-- KPIs -->
+            <div class="grid grid-cols-4 gap-6 mb-8">
+                <div class="bg-white border border-gray-200 rounded-lg p-6">
+                    <div class="flex items-baseline justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Total Productos</p>
+                            <p class="text-4xl font-bold text-gray-900 mt-2" th:text="${totalProductos}">0</p>
+                        </div>
+                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m0 0v10l8 4"></path>
+                        </svg>
+                    </div>
+                    <div class="mt-4 h-1 bg-gradient-to-r from-blue-500 to-transparent rounded"></div>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-lg p-6">
+                    <div class="flex items-baseline justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Categorías</p>
+                            <p class="text-4xl font-bold text-gray-900 mt-2" th:text="${totalCategorias}">0</p>
+                        </div>
+                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                        </svg>
+                    </div>
+                    <div class="mt-4 h-1 bg-gradient-to-r from-emerald-500 to-transparent rounded"></div>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-lg p-6">
+                    <div class="flex items-baseline justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Marcas</p>
+                            <p class="text-4xl font-bold text-gray-900 mt-2" th:text="${totalMarcas}">0</p>
+                        </div>
+                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m7.5-4a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="mt-4 h-1 bg-gradient-to-r from-purple-500 to-transparent rounded"></div>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-lg p-6">
+                    <div class="flex items-baseline justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm font-medium">Estado</p>
+                            <p class="text-2xl font-bold text-green-600 mt-2">Activo</p>
+                        </div>
+                        <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div class="mt-4 h-1 bg-gradient-to-r from-green-500 to-transparent rounded"></div>
+                </div>
+            </div>
+
+            <!-- Gráficos -->
+            <div class="mb-8">
+                <h2 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">Análisis</h2>
+                <div class="grid grid-cols-3 gap-6">
+                    <!-- Productos por Categoría -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="font-semibold text-gray-900 mb-4 text-center">Productos por Categoría</h3>
+                        <canvas id="categoriaChart"></canvas>
+                    </div>
+
+                    <!-- Productos por Marca -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="font-semibold text-gray-900 mb-4 text-center">Productos por Marca</h3>
+                        <canvas id="marcaChart"></canvas>
+                    </div>
+
+                    <!-- Stock Top 10 -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h3 class="font-semibold text-gray-900 mb-4 text-center">Top 10 Stock</h3>
+                        <canvas id="stockChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Access -->
+            <div class="mb-8">
+                <h2 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">Acciones rápidas</h2>
+                <div class="grid grid-cols-3 gap-4">
+                    <a th:href="@{/productos}" class="group bg-white border border-gray-200 rounded-lg p-5 hover:border-blue-300 hover:bg-blue-50/30 transition">
+                        <h3 class="font-semibold text-gray-900 mb-1">Productos</h3>
+                        <p class="text-sm text-gray-600 mb-4">Gestiona tu catálogo</p>
+                        <span class="text-xs font-semibold text-blue-600">Ver más →</span>
+                    </a>
+                    <a th:href="@{/categorias}" class="group bg-white border border-gray-200 rounded-lg p-5 hover:border-emerald-300 hover:bg-emerald-50/30 transition">
+                        <h3 class="font-semibold text-gray-900 mb-1">Categorías</h3>
+                        <p class="text-sm text-gray-600 mb-4">Organiza clasificaciones</p>
+                        <span class="text-xs font-semibold text-emerald-600">Ver más →</span>
+                    </a>
+                    <a th:href="@{/marcas}" class="group bg-white border border-gray-200 rounded-lg p-5 hover:border-purple-300 hover:bg-purple-50/30 transition">
+                        <h3 class="font-semibold text-gray-900 mb-1">Marcas</h3>
+                        <p class="text-sm text-gray-600 mb-4">Administra proveedores</p>
+                        <span class="text-xs font-semibold text-purple-600">Ver más →</span>
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-white/50 border-t border-gray-200/50 px-8 py-4 text-center">
+            <p class="text-gray-500 text-sm font-medium">Kenpaku Ferretería <span class="text-gray-300">•</span> 2026</p>
+        </footer>
+    </div>
+</div>
+
+<script th:inline="javascript">
+// Datos de los gráficos desde Thymeleaf
+const categoriaLabels = /*[[${categoriaLabels}]]*/ [];
+const categoriaData = /*[[${categoriaData}]]*/ [];
+const marcaLabels = /*[[${marcaLabels}]]*/ [];
+const marcaData = /*[[${marcaData}]]*/ [];
+const stockLabels = /*[[${stockLabels}]]*/ [];
+const stockData = /*[[${stockData}]]*/ [];
+
+// Paleta de colores
+const colors = {
+    blue: 'rgb(59, 130, 246)',
+    emerald: 'rgb(16, 185, 129)',
+    purple: 'rgb(139, 92, 246)',
+    orange: 'rgb(249, 115, 22)',
+    pink: 'rgb(236, 72, 153)',
+    cyan: 'rgb(34, 211, 238)',
+    indigo: 'rgb(99, 102, 241)',
+    rose: 'rgb(244, 63, 94)',
+    amber: 'rgb(251, 146, 60)',
+    lime: 'rgb(132, 204, 22)'
+};
+
+// Gráfico de Productos por Categoría (Pie)
+const ctx1 = categoriaChart.getContext('2d');
+new Chart(ctx1, {
+    type: 'doughnut',
+    data: {
+        labels: categoriaLabels,
+        datasets: [{
+            data: categoriaData,
+            backgroundColor: [colors.blue, colors.emerald, colors.purple, colors.orange, colors.pink],
+            borderColor: '#fff',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: { position: 'bottom', labels: { font: { size: 12, family: "'Inter', sans-serif" } } },
+            tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed} productos` } }
+        }
+    }
+});
+
+// Gráfico de Productos por Marca (Doughnut)
+const ctx2 = marcaChart.getContext('2d');
+new Chart(ctx2, {
+    type: 'doughnut',
+    data: {
+        labels: marcaLabels,
+        datasets: [{
+            data: marcaData,
+            backgroundColor: [colors.cyan, colors.indigo, colors.rose, colors.amber, colors.lime],
+            borderColor: '#fff',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: { position: 'bottom', labels: { font: { size: 12, family: "'Inter', sans-serif" } } },
+            tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed} productos` } }
+        }
+    }
+});
+
+// Gráfico de Stock (Bar)
+const ctx3 = stockChart.getContext('2d');
+new Chart(ctx3, {
+    type: 'bar',
+    data: {
+        labels: stockLabels,
+        datasets: [{
+            label: 'Stock',
+            data: stockData,
+            backgroundColor: colors.blue,
+            borderColor: 'rgb(37, 99, 235)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: { display: false }
+        },
+        scales: {
+            x: { beginAtZero: true }
+        }
+    }
+});
+</script>
+</body>
+</html>
