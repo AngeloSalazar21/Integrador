@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${producto.id != null} ? 'Editar producto' : 'Nuevo producto'">Producto - Kenpaku Ferretería</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 min-h-screen">
+<div class="max-w-2xl mx-auto py-12 px-4">
+    <div class="bg-white border border-gray-200 rounded-lg shadow-sm">
+        <div class="border-b border-gray-200 px-8 py-6">
+            <h1 class="text-2xl font-bold text-gray-900" th:text="${producto.id != null} ? 'Editar producto' : 'Nuevo producto'">Producto</h1>
+            <p class="text-gray-500 text-sm mt-1">Completa los datos del producto</p>
+        </div>
+
+        <form th:action="@{/productos/guardar}" th:object="${producto}" method="post" class="p-8">
+            <input type="hidden" th:field="*{id}" />
+            <input type="hidden" th:field="*{sku}" />
+
+            <div class="mb-6">
+                <label for="nombre" class="block text-sm font-semibold text-gray-700 mb-2">Nombre del producto *</label>
+                <input id="nombre" type="text" th:field="*{nombre}"
+                       class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       placeholder="Ej: Tornillo m8x25" />
+                <p class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="precio" class="block text-sm font-semibold text-gray-700 mb-2">Precio *</label>
+                    <input id="precio" type="number" step="0.01" min="0" th:field="*{precio}"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="0.00" />
+                    <p class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('precio')}" th:errors="*{precio}"></p>
+                </div>
+                <div>
+                    <label for="stock" class="block text-sm font-semibold text-gray-700 mb-2">Stock *</label>
+                    <input id="stock" type="number" min="0" th:field="*{stock}"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           placeholder="0" />
+                    <p class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label for="categoriaId" class="block text-sm font-semibold text-gray-700 mb-2">Categoría *</label>
+                    <select id="categoriaId" th:field="*{categoriaId}"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Selecciona una categoría</option>
+                        <option th:each="cat : ${categorias}" th:value="${cat.id}" th:text="${cat.nombre}"></option>
+                    </select>
+                    <p class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('categoriaId')}" th:errors="*{categoriaId}"></p>
+                </div>
+                <div>
+                    <label for="marcaId" class="block text-sm font-semibold text-gray-700 mb-2">Marca *</label>
+                    <select id="marcaId" th:field="*{marcaId}"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">Selecciona una marca</option>
+                        <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option>
+                    </select>
+                    <p class="text-red-600 text-sm mt-1" th:if="${#fields.hasErrors('marcaId')}" th:errors="*{marcaId}"></p>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <label class="flex items-center gap-3 cursor-pointer p-3 hover:bg-gray-50 rounded-lg border border-gray-200">
+                    <input type="checkbox" th:field="*{activo}" />
+                    <span class="text-sm font-medium text-gray-700">Producto activo en el sistema</span>
+                </label>
+            </div>
+
+            <div class="flex gap-3 pt-4 border-t border-gray-200">
+                <button type="submit" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium text-sm transition">
+                    Guardar producto
+                </button>
+                <a th:href="@{/productos}" class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg font-medium text-sm transition">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

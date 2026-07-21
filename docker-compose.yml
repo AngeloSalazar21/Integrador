@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: kenpaku-postgres
+    environment:
+      POSTGRES_DB: kenpaku
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Scripts de mantenimiento accesibles dentro del contenedor
+      - ./scripts:/scripts
+    networks:
+      - kenpaku-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d kenpaku"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: kenpaku-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      # Spring mapea estas variables a spring.datasource.* (relaxed binding).
+      # Dentro de la red de Docker el host de la BD es "postgres", no localhost.
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/kenpaku
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin123
+    ports:
+      - "8080:8080"
+    networks:
+      - kenpaku-network
+    restart: unless-stopped
+
+networks:
+  kenpaku-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

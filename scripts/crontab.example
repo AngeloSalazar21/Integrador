@@ -1,0 +1,17 @@
+# ============================================================
+# Ejemplo de cron jobs para el mantenimiento de Kenpaku Ferretería
+# Instalar con:  crontab -e   (y pegar las líneas necesarias)
+# Requiere que PGPASSWORD esté disponible (p.ej. archivo ~/.pgpass)
+# ============================================================
+
+# Backup diario de la base de datos a las 02:00
+0 2 * * *   cd /opt/kenpaku && ./scripts/backup.sh >> /var/log/kenpaku-backup.log 2>&1
+
+# Backup completo semanal (domingo 03:00) en otro directorio de retención larga
+0 3 * * 0   BACKUP_DIR=/opt/kenpaku/backups-semanales RETENTION_DAYS=90 /opt/kenpaku/scripts/backup.sh >> /var/log/kenpaku-backup.log 2>&1
+
+# Limpieza de logs rotados de la aplicación con más de 30 días (cada lunes 04:00)
+0 4 * * 1   find /opt/kenpaku/logs -name "*.log.*" -mtime +30 -delete
+
+# Verificación de salud cada 5 minutos; si falla, se registra en un log de incidencias
+*/5 * * * * curl -fsS http://localhost:8080/actuator/health > /dev/null || echo "$(date) health check FAILED" >> /var/log/kenpaku-health.log

@@ -1,0 +1,4 @@
+com\kenpaku\ferreteria\service\ProductoServiceTest.class
+com\kenpaku\ferreteria\service\CategoriaServiceTest.class
+com\kenpaku\ferreteria\KenpakuFerreteriaApplicationTests.class
+com\kenpaku\ferreteria\repository\UserRepositoryTest.class
